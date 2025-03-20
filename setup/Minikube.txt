@@ -1,0 +1,5 @@
+Local Setup:
+
+brew install knative/client/kn
+kn quickstart minikube
+open tunnel: minikube tunnel --profile knative

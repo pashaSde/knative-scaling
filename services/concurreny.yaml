@@ -9,6 +9,7 @@ spec:
       annotations:
         autoscaling.knative.dev/metric: "concurrency"
         autoscaling.knative.dev/target: "10"
+        autoscaling.knative.dev/minScale: "1"
         autoscaling.knative.dev/scale-to-zero: "false"
     spec:
       containers:

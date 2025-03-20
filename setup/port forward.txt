@@ -1,0 +1,88 @@
+1. Start a New Screen Session
+On your CloudLab node, run:
+
+bash
+Copy
+Edit
+screen -S kourier-portforward
+This starts a new screen session named kourier-portforward.
+
+2. Run the Port-Forward Command
+Inside the screen session, run:
+
+bash
+Copy
+Edit
+kubectl port-forward -n kourier-system svc/kourier --address 0.0.0.0 8080:80
+This will keep running inside the screen session.
+It makes the service accessible from any external IP.
+3. Detach from the Screen Session
+Press:
+
+css
+Copy
+Edit
+Ctrl + A, then D
+This will detach you from the screen session, but the port-forwarding will keep running in the background.
+4. Reattach Later (If Needed)
+If you want to check the port-forwarding session later, run:
+
+bash
+Copy
+Edit
+screen -r kourier-portforward
+5. Stop the Port-Forwarding (If Needed)
+To stop the process, first reconnect to the screen session:
+
+bash
+Copy
+Edit
+screen -r kourier-portforward
+Then, press:
+
+mathematica
+Copy
+Edit
+Ctrl + C
+This will terminate the kubectl port-forward command.
+
+If you want to delete the screen session completely, run:
+
+bash
+Copy
+Edit
+screen -X -S kourier-portforward quit
+
+--
+
+screen -S grafana-portforward
+screen -S kourier-portforward
+screen -S prometheus-portforward
+
+--
+
+Grafana: http://128.110.219.21:32067/?orgId=1&from=now-6h&to=now&timezone=browser
+admin
+prom-operator
+
+---
+Prometheus - http://128.110.219.21:32390/query
+
+Artilery - https://app.artillery.io/oafyusu6z5lkw/load-tests/tn4dr_zak88qy84mtxnhyxnrj5m7kwkfn9t_9w9a
+
+Scenario 1 - Concurrent with scale to zero on - KPA
+Scenario 2 - Concurrent with scale to zero off - KPA
+Scenario 3 - RPS with scale to zero on - KPA
+Scenario 4 - RPS with scale to zero off - KPA
+
+4 scenarios...4 graphs
+
+Scenario 5 - Artillery attack + litmus chaos - Monitor on Grafana
+
+Done
+
+If time permits, do for HPA.
+
+turn off scale to 0
+
+kubectl patch cm config-autoscaler -n knative-serving --type merge -p '{"data":{"enable-scale-to-zero":"false"}}'
