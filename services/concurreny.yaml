@@ -1,0 +1,15 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: ksvc-concurrency-no-scale-to-zero
+  namespace: production
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/metric: "concurrency"
+        autoscaling.knative.dev/target: "10"
+        autoscaling.knative.dev/scale-to-zero: "false"
+    spec:
+      containers:
+        - image: ghcr.io/knative/autoscale-go:latest

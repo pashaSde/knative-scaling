@@ -1,0 +1,32 @@
+config:
+  target: "http://128.110.219.23:8080"
+  phases:
+    - duration: 60
+      arrivalRate: 0
+      name: Idle period (ensure scale to zero)
+    - duration: 60
+      arrivalRate: 10
+      rampTo: 50
+      name: Gradual increase
+    - duration: 30
+      arrivalRate: 50
+      rampTo: 100
+      name: Spike load
+  plugins:
+    ensure: {}
+    apdex: {}
+    metrics-by-endpoint: {}
+  apdex:
+    threshold: 100
+  ensure:
+    thresholds:
+      - http.response_time.p99: 100
+      - http.response_time.p95: 75
+scenarios:
+  - flow:
+      - loop:
+          - get:
+              url: "/"
+              headers:
+                Host: "ksvc-rps-scale-to-zero.production.example.com"
+        count: 100

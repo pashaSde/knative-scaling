@@ -1,0 +1,37 @@
+config:
+  # Replace with your target service
+  target: "http://128.110.219.21:8080"
+  phases:
+    - duration: 60
+      arrivalRate: 1
+      rampTo: 5
+      name: Warm up phase
+    - duration: 60
+      arrivalRate: 5
+      rampTo: 10
+      name: Ramp up load
+    - duration: 30
+      arrivalRate: 10
+      rampTo: 30
+      name: Spike phase
+  # Load & configure a couple of useful plugins
+  # https://docs.art/reference/extensions
+  plugins:
+    ensure: {}
+    apdex: {}
+    metrics-by-endpoint: {}
+  apdex:
+    threshold: 100
+  ensure:
+    thresholds:
+      - http.response_time.p99: 100
+      - http.response_time.p95: 75
+scenarios:
+  - flow:
+      - loop:
+          # Define the sequence of requests to your service with query parameters
+          - get:
+              url: "/?sleep=100&prime=10000&bloat=5"
+              headers:
+                Host: "autoscale-go.production.example.com"  # Replace with your actual Host header
+        count: 100
