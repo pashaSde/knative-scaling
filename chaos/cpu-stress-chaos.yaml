@@ -1,0 +1,50 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosExperiment
+metadata:
+  name: cpu-stress
+  namespace: chaos-testing
+spec:
+  definition:
+    scope: Namespaced
+    version: v1alpha1
+    name: cpu-stress-chaos
+  components:
+    - name: cpu-stress-chaos
+      spec:
+        experimentName: cpu-stress
+        chaosLib: litmuschaos.io/lib-chaos
+        chaosClass: "chaos-infra"
+        target:
+          selector:
+            matchLabels:
+              app: "autoscale-go"  # Replace with your pod label selector
+        duration: "30s"  # Duration of the chaos experiment
+        cpuLimit: "80"  # The amount of CPU utilization (in percentage) you want to simulate
+
+---
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: cpu-stress-engine
+  namespace: chaos-testing
+spec:
+  appinfo:
+    appns: "production"  # Replace with your app's namespace
+    applabel: "autoscale-go"  # Replace with your app's label
+    appkind: "deployment"  # Replace with your app's kind (e.g., deployment, statefulset, etc.)
+  chaosServiceAccount: litmus-admin
+  experiments:
+    - name: cpu-stress
+      spec:
+        components:
+          - name: cpu-stress-chaos
+            spec:
+              experimentName: cpu-stress
+              chaosLib: litmuschaos.io/lib-chaos
+              chaosClass: "chaos-infra"
+              target:
+                selector:
+                  matchLabels:
+                    app: "autoscale-go"  # Replace with your target pod label
+              duration: "30s"
+              cpuLimit: "80"  # Stress level for CPU usage
